@@ -6,7 +6,7 @@ ZONE="us-west1-b"
 INSTANCE_TYPE="n1-standard-4"
 GPU_TYPE="t4"
 GPU_COUNT=1
-BUILD_ID=$(date +%s%5N)
+BUILD_ID=$(date +%s)
 
 usage() {
     echo "Usage: "
@@ -46,6 +46,7 @@ fi
 
 INSTANCE_NAME="experiment-${BUILD_ID}"
 META_DATA="execute_file=${EXECUTE_FILE},startup-script-url=https://raw.githubusercontent.com/pandorina1013/GceExperimentExecutor/main/executor.sh"
+
 echo "Build id: ${BUILD_ID}"
 echo "Instance name: ${INSTANCE_NAME}"
 echo "Excute file: ${EXECUTE_FILE}"
@@ -54,9 +55,4 @@ echo "GPU type: ${GPU_TYPE}"
 echo "GPU count: ${GPU_COUNT}"
 echo "Metadata: ${META_DATA}"
 
-########################################## custom here ##########################################
-gcloud compute instances create ${INSTANCE_NAME} \
-    --zone=${ZONE} \
-    --machine-type=${INSTANCE_TYPE} \
-    --accelerator=type=nvidia-tesla-${GPU_TYPE},count=${GPU_COUNT} \
-    --metadata=${META_DATA}
+sh gcloud_command.sh -i ${INSTANCE_NAME} -z ${ZONE} -t ${INSTANCE_TYPE} -g ${GPU_TYPE} -c ${GPU_COUNT} -m ${META_DATA}

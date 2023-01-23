@@ -72,6 +72,7 @@ if [ -n "${INSTANCE_STATUS}" ]; then
     else
         echo "Instance is running"
         echo "Waiting for instance ${INSTANCE_NAME} to be ready or create new instance..."
+        exit 1
     fi
 else
     echo "Instance does not exist"

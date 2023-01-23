@@ -21,8 +21,13 @@ readonly INSTANCE_PROJECT_NAME=$(curl http://metadata.google.internal/computeMet
 readonly EXECUTE_FILE=$(curl http://metadata.google.internal/computeMetadata/v1/instance/attributes/execute_file -H "Metadata-Flavor: Google")
 
 # install gpu driver
-curl https://raw.githubusercontent.com/GoogleCloudPlatform/compute-gpu-installation/main/linux/install_gpu_driver.py --output install_gpu_driver.py
-sudo python3 install_gpu_driver.py
+if lspci -vnn | grep NVIDIA > /dev/null 2>&1; then
+  if ! nvidia-smi > /dev/null 2>&1; then
+    echo "Installing driver"
+    curl https://raw.githubusercontent.com/GoogleCloudPlatform/compute-gpu-installation/main/linux/install_gpu_driver.py --output install_gpu_driver.py
+    sudo python3 install_gpu_driver.py
+  fi
+fi
 
 # set environment
 curl http://metadata.google.internal/computeMetadata/v1/instance/attributes/environment-setting -H "Metadata-Flavor: Google" > .env
@@ -35,12 +40,12 @@ if [ -e ${GIT_REPO} ]; then
 else
   git clone https://${GIT_USER}:${GIT_TOKEN}@github.com/${GIT_USER}/${GIT_REPO}
   cd ${GIT_REPO}
+  pip3 install --upgrade pip setuptools wheel
+  pip3 install -r requirements.txt
 fi
 
 # set environment
 mv ../.env .env
-pip3 install --upgrade pip setuptools wheel
-pip3 install -r requirements.txt
 
 # sync gcs bucket
 python3 gcs-rsync.py

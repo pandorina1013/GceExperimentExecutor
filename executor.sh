@@ -29,8 +29,13 @@ curl http://metadata.google.internal/computeMetadata/v1/instance/attributes/envi
 export $(cat .env| grep -v "#" | xargs)
 
 # git clone
-git clone https://${GIT_USER}:${GIT_TOKEN}@github.com/${GIT_USER}/${GIT_REPO}
-cd ${GIT_REPO}
+if [ -e ${GIT_REPO} ]; then
+  cd ${GIT_REPO}
+  git pull
+else
+  git clone https://${GIT_USER}:${GIT_TOKEN}@github.com/${GIT_USER}/${GIT_REPO}
+  cd ${GIT_REPO}
+fi
 
 # set environment
 mv ../.env .env

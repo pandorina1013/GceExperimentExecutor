@@ -5,11 +5,12 @@
 
 - gcloud_command.sh
   
-  gcloudコマンドのうち、experiment.shでカスタムしない部分について書く。
+  叩くgcloudコマンド。セキュリティのために切り出した。
 
 - experiment.sh
-
+  
   gcloudコマンドが通る場所で実行するスクリプト。
+  gcloud_command.shの引数部分を管理する。
   METADATAとしてvmを立ち上げたときに実行したい実験ファイルとstartup-scriptを渡している。
 
 - executor.sh
@@ -18,7 +19,15 @@
 
 - .env
   
-  token, passwordなど重要な情報は.envファイルに記述
+  token, passwordなど重要な情報は.envファイルに記述。startup-scriptが立ち上がった際に環境変数に格納されます。
+  gitignore推奨。
+  ex :
+  ```
+  WANDB=<wandb token>
+  GIT_USER=<git user>
+  GIT_PASS=<git password>
+  GIT_REPO=<git repo>
+  ```
 
 
 ## 例: 

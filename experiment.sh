@@ -64,20 +64,18 @@ if [ -n "${INSTANCE_STATUS}" ]; then
     if [ "${INSTANCE_STATUS}"=TERMINATED ]; then
         echo "Instance is terminated"
         echo "restart instance..."
-
-        gcloud compute instances start ${INSTANCE_NAME} \
+        gcloud compute instances add-metadata ${INSTANCE_NAME} \
             --zone=${ZONE} \
-            --metadata=${META_DATA}
-            --metadata-from-file startup-script=executor.sh,environment-setting=.env \
+            --metadata=${META_DATA} \
+            --metadata-from-file startup-script=executor.sh,environment-setting=.env
+        gcloud compute instances start ${INSTANCE_NAME} --zone=${ZONE}
     else
         echo "Instance is running"
         echo "Waiting for instance ${INSTANCE_NAME} to be ready or create new instance..."
     fi
-
 else
     echo "Instance does not exist"
     echo "creating instance..."
-
     # custom here
     gcloud compute instances create ${INSTANCE_NAME} \
         --zone=${ZONE} \

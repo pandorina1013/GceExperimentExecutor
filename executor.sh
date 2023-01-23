@@ -5,7 +5,6 @@ trap finally EXIT
 
 function catch {
   echo "Experiment failed."
-  # gcloud --quiet compute instances delete "${INSTANCE_NAME}" --zone "${INSTANCE_ZONE}" --project "${INSTANCE_PROJECT_NAME}"
 }
 function finally {
   echo "Delete instance."
@@ -33,16 +32,16 @@ cd ${GIT_REPO}
 
 # set environment
 mv ../.env .env
-
-# sync gcs bucket
 pip3 install --upgrade pip setuptools wheel
 pip3 install -r requirements.txt
-# python3 gcs_sync.py
+
+# sync gcs bucket
+python3 gcs-rsync.py
 
 # execute experiment
-# python3 EXECUTE_FILE
+python3 ${EXECUTE_FILE}
 
 # upload result to gcs bucket
-# python3 gcs_sync.py -u
+python3 gcs-rsync.py -u
 
 echo "Experiment finished successfully."

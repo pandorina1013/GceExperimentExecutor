@@ -15,3 +15,4 @@ gcloud compute instances create ${INSTANCE_NAME} \
     --machine-type=${INSTANCE_TYPE} \
     --accelerator=type=nvidia-tesla-${GPU_TYPE},count=${GPU_COUNT} \
     --metadata=${META_DATA} \
+    --metadata-from-file startup-script=executor.sh,environment-setting=.env \

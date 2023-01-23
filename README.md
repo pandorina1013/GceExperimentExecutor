@@ -16,6 +16,10 @@
 
   vmが立ち上がった後に渡されるstartup-script。vm内での実験の開始から終了までを司る。
 
+- .env
+  
+  token, passwordなど重要な情報は.envファイルに記述
+
 
 ## 例: 
 ```sh experiment.sh -i exp001/main.py -g p100 -z us-west1-b -t n1-standard-8```

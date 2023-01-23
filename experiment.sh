@@ -45,7 +45,7 @@ if [[ -z "$EXECUTE_FILE" ]]; then
 fi
 
 INSTANCE_NAME="experiment-${BUILD_ID}"
-META_DATA="execute_file=${EXECUTE_FILE},startup-script-url=https://raw.githubusercontent.com/pandorina1013/GceExperimentExecutor/main/executor.sh"
+META_DATA="execute_file=${EXECUTE_FILE}"
 
 echo "Build id: ${BUILD_ID}"
 echo "Instance name: ${INSTANCE_NAME}"

@@ -1,21 +1,19 @@
 # GceExperimentExecutor
- gceでコスパよく実験を回すためのスクリプト
+ gceでコスパよく実験を回すためのスクリプト。
+ VMがなければ作ってくれ、あって停止中なら叩き起こしてstartup-scriptを走らせるし動作中なら何も実行しないでくれます。
+ このスクリプトをぐるぐる回してオートスケーラーもどきを作ることもできます。
 
 ## 構成
-
-- gcloud_command.sh
-  
-  叩くgcloudコマンド。セキュリティのために切り出した。
 
 - experiment.sh
   
   gcloudコマンドが通る場所で実行するスクリプト。
-  gcloud_command.shの引数部分を管理する。
   METADATAとしてvmを立ち上げたときに実行したい実験ファイルとstartup-scriptを渡している。
+  gcloudコマンドを修正してお好みのインスタンスを立てることもできます。
 
 - executor.sh
 
-  vmが立ち上がった後に渡されるstartup-script。vm内での実験の開始から終了までを司る。
+  vmが立ち上がった後に渡されるstartup-script。vm内での実験の開始から停止までを司る。
 
 - .env
   
@@ -31,4 +29,4 @@
 
 
 ## 例: 
-```sh experiment.sh -i exp001/main.py -g p100 -z us-west1-b -t n1-standard-8```
+```sh experiment.sh -i test-vm -e exp001/main.py -g p100 -z us-west1-b -t n1-standard-8```

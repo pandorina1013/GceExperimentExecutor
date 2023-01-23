@@ -40,11 +40,11 @@ while getopts i:e:z:g:c:t: opt; do
 done
 echo "Excution of the experiment initiated with the following input arguments: $@"
 
-if [[ -z "$INSTANCE_NAME" ]]; then
+if [ -z "$INSTANCE_NAME" ]; then
     echo "instance name field is empty (use key -i)"
     exit 1
 fi
-if [[ -z "$EXECUTE_FILE" ]]; then
+if [ -z "$EXECUTE_FILE" ]; then
     echo "experiment file name field is empty (use key -e)"
     exit 1
 fi
@@ -58,4 +58,35 @@ echo "GPU type: ${GPU_TYPE}"
 echo "GPU count: ${GPU_COUNT}"
 echo "Metadata: ${META_DATA}"
 
-sh gcloud_command.sh -i ${INSTANCE_NAME} -z ${ZONE} -t ${INSTANCE_TYPE} -g ${GPU_TYPE} -c ${GPU_COUNT} -m ${META_DATA}
+INSTANCE_STATUS=$(gcloud compute instances list --filter="name=${INSTANCE_NAME}" --format="value(status)")
+
+if [ -n "${INSTANCE_STATUS}" ]; then
+    if [ "${INSTANCE_STATUS}"=TERMINATED ]; then
+        echo "Instance is terminated"
+        echo "restart instance..."
+
+        gcloud compute instances start ${INSTANCE_NAME} \
+            --zone=${ZONE} \
+            --metadata=${META_DATA}
+            --metadata-from-file startup-script=executor.sh,environment-setting=.env \
+    else
+        echo "Instance is running"
+        echo "Waiting for instance ${INSTANCE_NAME} to be ready or create new instance..."
+    fi
+
+else
+    echo "Instance does not exist"
+    echo "creating instance..."
+
+    # custom here
+    gcloud compute instances create ${INSTANCE_NAME} \
+        --zone=${ZONE} \
+        --machine-type=${INSTANCE_TYPE} \
+        --accelerator=type=nvidia-tesla-${GPU_TYPE},count=${GPU_COUNT} \
+        --metadata=${META_DATA} \
+        --metadata-from-file startup-script=executor.sh,environment-setting=.env \
+        --no-restart-on-failure \
+        --maintenance-policy=TERMINATE \
+        --preemptible \
+        --provisioning-model=SPOT \
+fi

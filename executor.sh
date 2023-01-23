@@ -19,6 +19,10 @@ INSTANCE_ZONE="${INSTANCE_ZONE##/*/}"
 readonly INSTANCE_PROJECT_NAME=$(curl http://metadata.google.internal/computeMetadata/v1/project/project-id -H "Metadata-Flavor: Google")
 readonly EXECUTE_FILE=$(curl http://metadata.google.internal/computeMetadata/v1/instance/attributes/execute_file -H "Metadata-Flavor: Google")
 
+# install gpu driver
+curl https://raw.githubusercontent.com/GoogleCloudPlatform/compute-gpu-installation/main/linux/install_gpu_driver.py --output install_gpu_driver.py
+sudo python3 install_gpu_driver.py
+
 # set environment
 curl http://metadata.google.internal/computeMetadata/v1/instance/attributes/environment-setting -H "Metadata-Flavor: Google" > .env
 export $(cat .env| grep -v "#" | xargs)
@@ -31,13 +35,14 @@ cd ${GIT_REPO}
 mv ../.env .env
 
 # sync gcs bucket
-pip3 install -r requirements.txt --user
-# python gcs_sync.py
+pip3 install --upgrade pip setuptools wheel
+pip3 install -r requirements.txt
+# python3 gcs_sync.py
 
 # execute experiment
-# python EXECUTE_FILE
+# python3 EXECUTE_FILE
 
 # upload result to gcs bucket
-# python gcs_sync.py -u
+# python3 gcs_sync.py -u
 
 echo "Experiment finished successfully."

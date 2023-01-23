@@ -7,8 +7,10 @@ function catch {
   echo "Experiment failed."
 }
 function finally {
-  echo "Delete instance."
-  gcloud --quiet compute instances delete "${INSTANCE_NAME}" --zone "${INSTANCE_ZONE}" --project "${INSTANCE_PROJECT_NAME}"
+  echo "Stop instance."
+  gcloud compute instances stop "${INSTANCE_NAME}" \
+    --zone "${INSTANCE_ZONE}" \
+    --project "${INSTANCE_PROJECT_NAME}"
 }
 
 # set variable

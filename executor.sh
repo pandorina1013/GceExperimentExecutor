@@ -53,7 +53,4 @@ python3 gcs-rsync.py
 # execute experiment
 python3 ${EXECUTE_FILE}
 
-# upload result to gcs bucket
-python3 gcs-rsync.py -u
-
 echo "Experiment finished successfully."

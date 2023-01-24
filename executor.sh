@@ -54,6 +54,8 @@ python3 gcs-rsync.py
 
 # execute experiment
 cd `dirname ${EXECUTE_FILE}`
+
+echo ${PWD##*/}
 python3 `basename ${EXECUTE_FILE}`
 
 

@@ -44,6 +44,8 @@ else
   pip3 install -r requirements.txt
 fi
 
+pip3 install ipython
+
 # set environment
 mv ../.env .env
 
@@ -51,6 +53,8 @@ mv ../.env .env
 python3 gcs-rsync.py
 
 # execute experiment
-python3 ${EXECUTE_FILE}
+cd `dirname ${EXECUTE_FILE}`
+python3 `basename ${EXECUTE_FILE}`
+
 
 echo "Experiment finished successfully."

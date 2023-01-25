@@ -29,6 +29,7 @@ sudo /opt/deeplearning/install-driver.sh
 # set environment
 curl http://metadata.google.internal/computeMetadata/v1/instance/attributes/environment-setting -H "Metadata-Flavor: Google" > .env
 export $(cat .env| grep -v "#" | xargs)
+alias python="python3"
 
 # git clone
 if [ -e ${GIT_REPO} ]; then
@@ -47,13 +48,13 @@ pip3 install ipython
 mv ../.env .env
 
 # sync gcs bucket
-python3 gcs-rsync.py
+python gcs-rsync.py
 
 # execute experiment
 cd `dirname ${EXECUTE_FILE}`
 
 echo ${PWD##*/}
-python3 `basename ${EXECUTE_FILE}`
+python `basename ${EXECUTE_FILE}`
 
 
 echo "Experiment finished successfully."

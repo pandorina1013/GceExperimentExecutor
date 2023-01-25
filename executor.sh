@@ -20,14 +20,11 @@ INSTANCE_ZONE="${INSTANCE_ZONE##/*/}"
 readonly INSTANCE_PROJECT_NAME=$(curl http://metadata.google.internal/computeMetadata/v1/project/project-id -H "Metadata-Flavor: Google")
 readonly EXECUTE_FILE=$(curl http://metadata.google.internal/computeMetadata/v1/instance/attributes/execute_file -H "Metadata-Flavor: Google")
 
-# install gpu driver
-if lspci -vnn | grep NVIDIA > /dev/null 2>&1; then
-  if ! nvidia-smi > /dev/null 2>&1; then
-    echo "Installing driver"
-    curl https://raw.githubusercontent.com/GoogleCloudPlatform/compute-gpu-installation/main/linux/install_gpu_driver.py --output install_gpu_driver.py
-    sudo python3 install_gpu_driver.py
-  fi
-fi
+# install gpu driver (なんですぐcuda壊れてしまうん???)
+echo "Installing driver"
+# curl https://raw.githubusercontent.com/GoogleCloudPlatform/compute-gpu-installation/main/linux/install_gpu_driver.py --output install_gpu_driver.py
+# sudo python3 install_gpu_driver.py
+sudo /opt/deeplearning/install-driver.sh
 
 # set environment
 curl http://metadata.google.internal/computeMetadata/v1/instance/attributes/environment-setting -H "Metadata-Flavor: Google" > .env

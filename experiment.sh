@@ -77,15 +77,33 @@ if [ -n "${INSTANCE_STATUS}" ]; then
 else
     echo "Instance does not exist"
     echo "creating instance..."
-    # custom here
-    gcloud compute instances create ${INSTANCE_NAME} \
-        --zone=${ZONE} \
-        --machine-type=${INSTANCE_TYPE} \
-        --accelerator=type=nvidia-tesla-${GPU_TYPE},count=${GPU_COUNT} \
-        --metadata=${META_DATA} \
-        --metadata-from-file startup-script=executor.sh,environment-setting=.env \
-        --no-restart-on-failure \
-        --maintenance-policy=TERMINATE \
-        --preemptible \
-        --provisioning-model=SPOT \
+    
+    # if instance gpu type is a100
+    if [ "${GPU_TYPE}" = "a100" ]; then
+        INSTANCE_TYPE="a2-highgpu-1g"
+        gcloud compute instances create ${INSTANCE_NAME} \
+            --zone=${ZONE} \
+            --machine-type=${INSTANCE_TYPE} \
+            --accelerator=type=nvidia-tesla-${GPU_TYPE},count=${GPU_COUNT} \
+            --metadata=${META_DATA} \
+            --image-family=pytorch-1-6-cu110 \
+            --image-project=deeplearning-platform-release  \
+            --metadata-from-file startup-script=executor.sh,environment-setting=.env \
+            --no-restart-on-failure \
+            --maintenance-policy=TERMINATE \
+            --preemptible \
+            --provisioning-model=SPOT
+    else
+        # if instance gpu type is not a100
+        gcloud compute instances create ${INSTANCE_NAME} \
+            --zone=${ZONE} \
+            --machine-type=${INSTANCE_TYPE} \
+            --accelerator=type=nvidia-tesla-${GPU_TYPE},count=${GPU_COUNT} \
+            --metadata=${META_DATA} \
+            --metadata-from-file startup-script=executor.sh,environment-setting=.env \
+            --no-restart-on-failure \
+            --maintenance-policy=TERMINATE \
+            --preemptible \
+            --provisioning-model=SPOT
+    fi
 fi

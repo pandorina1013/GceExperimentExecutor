@@ -38,9 +38,9 @@ else
   git clone https://${GIT_USER}:${GIT_TOKEN}@github.com/${GIT_USER}/${GIT_REPO}
   cd ${GIT_REPO}
   pip3 install --upgrade pip setuptools wheel
-  pip3 install -r requirements.txt
 fi
 
+pip3 install -r requirements.txt
 pip3 install ipython
 
 # set environment
@@ -51,6 +51,11 @@ python3 gcs-rsync.py
 
 # execute experiment
 cd `dirname ${EXECUTE_FILE}`
+
+# remove output directory
+if [ -e output ]; then
+  rm -r output
+fi
 
 echo ${PWD##*/}
 python3 `basename ${EXECUTE_FILE}`

@@ -80,19 +80,26 @@ else
     
     # if instance gpu type is a100
     if [ "${GPU_TYPE}" = "a100" ]; then
-        INSTANCE_TYPE="a2-highgpu-1g"
+        # INSTANCE_TYPE="a2-highgpu-1g"
+        INSTANCE_TYPE="a2-ultragpu-1g"
         gcloud compute instances create ${INSTANCE_NAME} \
             --zone=${ZONE} \
             --machine-type=${INSTANCE_TYPE} \
-            --accelerator=type=nvidia-tesla-${GPU_TYPE},count=${GPU_COUNT} \
+            --accelerator=type=nvidia-a100-80gb,count=${GPU_COUNT} \
             --metadata=${META_DATA} \
-            --image-family=pytorch-1-6-cu110 \
-            --image-project=deeplearning-platform-release  \
             --metadata-from-file startup-script=executor.sh,environment-setting=.env \
             --no-restart-on-failure \
             --maintenance-policy=TERMINATE \
             --preemptible \
-            --provisioning-model=SPOT
+            --provisioning-model=SPOT \
+            --network-interface=subnet=lab-nat-network,no-address \
+            --service-account=694570793995-compute@developer.gserviceaccount.com \
+            --scopes=https://www.googleapis.com/auth/cloud-platform,https://www.googleapis.com/auth/logging.write,https://www.googleapis.com/auth/monitoring.write,https://www.googleapis.com/auth/trace.append,https://www.googleapis.com/auth/servicecontrol,https://www.googleapis.com/auth/service.management.readonly,https://www.googleapis.com/auth/devstorage.read_write \
+            --create-disk=auto-delete=yes,boot=yes,device-name=masaki-solafune-t4-1,image=projects/ml-images/global/images/c2-deeplearning-pytorch-1-13-cu113-v20221215-debian-10,mode=rw,size=200,type=projects/lab-ds/zones/us-west1-b/diskTypes/pd-balanced \
+            --no-shielded-secure-boot \
+            --shielded-vtpm \
+            --shielded-integrity-monitoring \
+            --reservation-affinity=any
     else
         # if instance gpu type is not a100
         gcloud compute instances create ${INSTANCE_NAME} \
@@ -104,6 +111,14 @@ else
             --no-restart-on-failure \
             --maintenance-policy=TERMINATE \
             --preemptible \
-            --provisioning-model=SPOT
+            --provisioning-model=SPOT \
+            --network-interface=subnet=lab-nat-network,no-address \
+            --service-account=694570793995-compute@developer.gserviceaccount.com \
+            --scopes=https://www.googleapis.com/auth/cloud-platform,https://www.googleapis.com/auth/logging.write,https://www.googleapis.com/auth/monitoring.write,https://www.googleapis.com/auth/trace.append,https://www.googleapis.com/auth/servicecontrol,https://www.googleapis.com/auth/service.management.readonly,https://www.googleapis.com/auth/devstorage.read_write \
+            --create-disk=auto-delete=yes,boot=yes,device-name=masaki-solafune-t4-1,image=projects/ml-images/global/images/c2-deeplearning-pytorch-1-13-cu113-v20221215-debian-10,mode=rw,size=200,type=projects/lab-ds/zones/us-west1-b/diskTypes/pd-balanced \
+            --no-shielded-secure-boot \
+            --shielded-vtpm \
+            --shielded-integrity-monitoring \
+            --reservation-affinity=any
     fi
 fi
